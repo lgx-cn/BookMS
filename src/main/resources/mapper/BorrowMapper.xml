@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lgx.mapper.BorrowMapper">
+
+    <!-- 新增借阅记录 -->
+    <insert id="add">
+        INSERT INTO t_borrow(book_code, username, status)
+        VALUES(#{bookCode}, #{username}, 1)
+    </insert>
+
+    <!-- 归还图书 -->
+    <update id="returnBook">
+        UPDATE t_borrow
+        SET status = 2, return_time = NOW()
+        WHERE book_code = #{bookCode} AND username = #{username} AND status = 1
+    </update>
+
+    <!-- 查询当前用户借阅中记录 -->
+    <select id="listBorrowing" resultType="com.lgx.entity.Borrow">
+        SELECT * FROM t_borrow
+        WHERE username = #{username} AND status = 1
+    </select>
+
+    <!-- 查询单条借阅记录（用于归还校验） -->
+    <select id="getBorrowingByCodeAndUser" resultType="com.lgx.entity.Borrow">
+        SELECT * FROM t_borrow
+        WHERE book_code = #{bookCode} AND username = #{username} AND status = 1
+    </select>
+
+</mapper>

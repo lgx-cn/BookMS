@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lgx.mapper.BookMapper">
+
+    <!-- 列表查询 -->
+    <select id="list" resultType="com.lgx.entity.Book">
+        select * from t_book
+    </select>
+
+    <!-- 根据ID查询 -->
+    <select id="getById" resultType="com.lgx.entity.Book">
+        select * from t_book where id = #{id}
+    </select>
+
+    <!-- 根据bookCode查询 -->
+    <select id="getByCode" resultType="com.lgx.entity.Book">
+        select * from t_book where book_code = #{bookCode}
+    </select>
+
+    <!-- 新增图书 -->
+    <insert id="add">
+        insert into t_book(name, author, price, book_code, status)
+        values(#{name}, #{author}, #{price}, #{bookCode}, #{status})
+    </insert>
+
+    <!-- 修改图书 -->
+    <update id="update">
+        update t_book
+        set name=#{name}, author=#{author}, price=#{price},
+        book_code=#{bookCode}, status=#{status}
+        where id=#{id}
+    </update>
+
+    <!-- 删除图书 -->
+    <delete id="delete">
+        delete from t_book where id=#{id}
+    </delete>
+
+    <!-- 搜索图书 -->
+    <select id="search" resultType="com.lgx.entity.Book">
+        select * from t_book
+        where name like concat('%',#{keyword},'%')
+        or author like concat('%',#{keyword},'%')
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="selectPage" resultType="com.lgx.entity.Book">
+        SELECT * FROM t_book LIMIT #{offset}, #{size}
+    </select>
+
+    <!-- 总条数 -->
+    <select id="selectCount" resultType="long">
+        SELECT COUNT(*) FROM t_book
+    </select>
+
+    <!-- 借阅图书：status=0 → 1 -->
+    <update id="borrowBook">
+        UPDATE t_book
+        SET status = 1, update_time = NOW()
+        WHERE book_code = #{bookCode} AND status = 0
+    </update>
+
+    <!-- 归还图书：status=1 → 0 -->
+    <update id="returnBook">
+        UPDATE t_book
+        SET status = 0, update_time = NOW()
+        WHERE book_code = #{bookCode} AND status = 1
+    </update>
+
+    <!-- 获取最大bookCode，用于自动生成新编码 -->
+    <select id="getMaxBookCode" resultType="string">
+        SELECT MAX(book_code) FROM t_book
+    </select>
+
+</mapper>
